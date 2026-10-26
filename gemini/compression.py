@@ -1,128 +1,75 @@
-"""
->>> a = np.arange(20)
->>> (a == snappy_unpack_blob(snappy_pack_blob(a))).all()
-True
-
->>> a = np.arange(20, dtype=np.uint8)
->>> snappy_unpack_blob(snappy_pack_blob(a)).dtype == a.dtype
-True
-
->>> a = np.arange(20, dtype=np.float32)
->>> b = snappy_unpack_blob(snappy_pack_blob(a))
->>> a.dtype == b.dtype == np.float32
-True
-
->>> all(ai == bi for ai, bi in zip(a, b))
-True
-
->>> snappy_unpack_blob(snappy_pack_blob(None)) is None
-True
-
->>> exp = ['A', 'XSDFSDFSD', "A/A,B"]
->>> obs = snappy_unpack_blob(snappy_pack_blob(np.array(exp)))
->>> assert exp == list(obs), (list(obs), exp)
-
->>> try:
-...    b = snappy_pack_blob(a)
-... except zlib.error:
-...    pass
-
-
->>> b = snappy_unpack_blob(snappy_pack_blob(np.array([False, True, False, True])))
->>> b[2] = True
-"""
-from __future__ import absolute_import
-import sys
+import pickle
 import zlib
+from collections import OrderedDict
+
+import numpy as np
+
 try:
-    import pickle as pickle
+    import snappy
 except ImportError:
-    import pickle
-
-try:
-    from cyordereddict import OrderedDict
-except:
-    from collections import OrderedDict
+    snappy = None
 
 
-if sys.version_info[0] == 3:
-    buffer = memoryview
-    def unpack_genotype_blob(blob):
-        return pickle.loads(zlib.decompress(blob), encoding='latin1')
-    def zdumps(obj):
-        return zlib.compress(pickle.dumps(obj, pickle.HIGHEST_PROTOCOL), 9)
-else:
-    def unpack_genotype_blob(blob):
-        return pickle.loads(zlib.decompress(blob))
-    def zdumps(obj):
-        return zlib.compress(pickle.dumps(obj, pickle.HIGHEST_PROTOCOL), 9)
+def unpack_genotype_blob(blob):
+    if blob is None:
+        return None
+    return pickle.loads(zlib.decompress(blob), encoding="latin1")
+
+
+def zdumps(obj):
+    return zlib.compress(pickle.dumps(obj, pickle.HIGHEST_PROTOCOL), 9)
+
 
 def pack_blob(obj):
-    return buffer(zdumps(obj))
+    return memoryview(zdumps(obj))
+
 
 def unpack_ordereddict_blob(blob):
-    blob_val = pickle.loads(zlib.decompress(blob))
+    if blob is None:
+        return None
+    blob_val = pickle.loads(zlib.decompress(blob), encoding="latin1")
     if blob_val is not None:
         return OrderedDict(blob_val)
     return None
 
 
-try:
-    import snappy
-except ImportError:
-    pass
+lookup = {
+    dt(1).dtype.char: dt
+    for dt in (
+        np.uint8,
+        np.uint32,
+        np.int32,
+        np.float32,
+        np.int64,
+        np.float64,
+        np.bool_,
+    )
+}
 
-import numpy as np
+SEP = "\0"
 
-# we use the numpy type char as the first item we save to know the dtype when we
-# decompress.
-lookup = {dt(1).dtype.char: dt for dt in (np.uint8, np.uint32, np.int32,
-          np.float32, np.int64, np.float64, np.bool_)}
 
-if sys.version_info[0] == 3:
-    SEP = '\0'
+def snappy_pack_blob(obj, sep=SEP):
+    if snappy is None:
+        raise RuntimeError("snappy is not installed")
+    if obj is None:
+        return b""
+    c = obj.dtype.char
+    if c in ("S", "U"):
+        return b"U" + snappy.compress(sep.join(obj).encode("utf-8"))
+    return memoryview(c.encode("utf-8") + snappy.compress(obj.tobytes(), "utf8"))
 
-    def snappy_pack_blob(obj, sep=SEP):
-        if obj is None: return ''
-        c = obj.dtype.char
-        if c == 'S' or c == 'U':
-            return b'U' + snappy.compress(sep.join(obj))
-        return buffer(c.encode('utf-8') + snappy.compress(obj.tobytes(), 'utf8'))
 
-    def snappy_unpack_blob(blob, sep=SEP):
-        if len(blob) == 0: return None
-        if blob[0] in (ord('S'), ord('U')):
-            return np.array(snappy.decompress(blob[1:], "utf8").split(sep))
-        dt = lookup[chr(blob[0])]
-        arr = np.frombuffer(snappy.decompress(blob[1:]), dtype=dt)
-        # hack since arrays arent writable from buffer and we need this for comp_het
-        # phasing.
-        if blob[0] == ord('?'):
-            arr = np.array(arr)
-            arr.setflags(write=True)
-        return arr
-
-else:
-
-    SEP = '\0'
-    def snappy_pack_blob(obj, sep=SEP):
-        if obj is None: return ''
-        c = obj.dtype.char
-        if c == 'S': return 'S' + snappy.compress(sep.join(obj))
-        return buffer(c + snappy.compress(obj.tobytes()))
-
-    def snappy_unpack_blob(blob, sep=SEP):
-        if len(blob) == 0: return None
-        if blob[0] == 'S':
-            return np.array(snappy.decompress(blob[1:]).split(sep))
-        dt = lookup[blob[0]]
-        arr = np.frombuffer(snappy.decompress(blob[1:]), dtype=dt)
-        # hack since arrays arent writable from buffer and we need this for comp_het
-        # phasing.
-        if blob[0] == '?':
-            arr.setflags(write=True)
-        return arr
-
-if __name__ == "__main__":
-    import doctest
-    print(doctest.testmod())
+def snappy_unpack_blob(blob, sep=SEP):
+    if snappy is None:
+        raise RuntimeError("snappy is not installed")
+    if not blob:
+        return None
+    if blob[0] in (ord("S"), ord("U")):
+        return np.array(snappy.decompress(blob[1:], "utf8").split(sep))
+    dt = lookup[chr(blob[0])]
+    arr = np.frombuffer(snappy.decompress(blob[1:]), dtype=dt)
+    if blob[0] == ord("?"):
+        arr = np.array(arr)
+        arr.setflags(write=True)
+    return arr

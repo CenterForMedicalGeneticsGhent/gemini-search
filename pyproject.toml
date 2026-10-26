@@ -1,10 +1,40 @@
-[workspace]
-authors = ["Matthias De Smet <11850640+matthdsm@users.noreply.github.com>"]
-channels = ["conda-forge", "bioconda"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "gemini-search"
-platforms = ["linux-64","osx-arm64"]
 version = "0.1.0"
+description = "Minimal Python library for querying GEMINI genetic variation databases"
+readme = "README.md"
+requires-python = ">=3.14"
+license = { text = "MIT" }
+authors = [
+  { name = "Matthias De Smet", email = "matthdsm@users.noreply.github.com" },
+]
+dependencies = [
+    "numpy>=2.5",
+]
 
-[tasks]
+[tool.pytest.ini_options]
+pythonpath = ["."]
 
-[dependencies]
+[tool.ruff]
+exclude = ["docs"]
+line-length = 100
+
+[tool.ruff.lint]
+
+[tool.pixi.workspace]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "osx-arm64"]
+
+[tool.pixi.tasks]
+test = "pytest"
+lint = "ruff check ."
+
+[tool.pixi.dependencies]
+python = ">=3.14,<4.0"
+numpy = ">=2.5"
+pytest = ">=8.0"
+ruff = ">=0.17.2,<0.18"

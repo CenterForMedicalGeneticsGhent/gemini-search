@@ -6,7 +6,7 @@ Design of Gemini
 ================
 
 Gemini stores all genotypes information in a single column. E.g. `gt_depths`
-is a single column in the sqlite database that contains information on all 
+is a single column in the sqlite database that contains information on all
 samples in a compressed and serialized array. So, in order to do a query involving
 `--gt-filter` `gemini` must iterate over each row, decompress and de-serialize the
 array and then evaluate the genotype filter. Even if the filter involves only a
@@ -42,7 +42,7 @@ Due to a limitation in the string type in bcolz, indexing the `gts` column
 is slower so we recommend not doing those queries with bcolz (e.g. gts.sample1 == 'A/C').
 See note below.
 
-It is recommended to only index the columns you'll be using in the 
+It is recommended to only index the columns you'll be using in the
 `--gt-filter`.
 
 Indexing is done only once; after that, add `--use-bcolz` to an existing gemini query command. e.g.
@@ -52,7 +52,7 @@ Indexing is done only once; after that, add `--use-bcolz` to an existing gemini 
     gemini query -q "select variant_id, gts.1719PC0016 from variants"  \
         --gt-filter "gt_types.1094PC0012 == HET and gt_types.1719PC0016 == HET and gts.1094PC0012 == 'A/C'" \
         --use-bcolz \
-        test/test.query.db 
+        test/test.query.db
 
 
 This query will return identical results with or without using bcolz. It is likely

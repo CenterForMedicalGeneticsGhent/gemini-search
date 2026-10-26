@@ -9,7 +9,7 @@ The ``variants`` table
 
 Core VCF fields
 ...............
-   
+
 ========================  ========      ==============================================================================================
 column_name               type          notes
 ========================  ========      ==============================================================================================
@@ -104,7 +104,7 @@ biotype                   STRING        The 'type' of the severely affected tran
 impact                    STRING        The consequence of the most severely affected transcript
 impact_so                 STRING        The Sequence ontology term for the most severe consequence
 impact_severity           STRING        Severity of the highest order observed for the variant
-polyphen_pred             STRING        Polyphen predictions for the snps for the severely affected transcript (``only VEP``) 
+polyphen_pred             STRING        Polyphen predictions for the snps for the severely affected transcript (``only VEP``)
 polyphen_score            FLOAT         Polyphen scores for the severely affected transcript (``only VEP``)
 sift_pred                 STRING        SIFT predictions for the snp's for the most severely affected transcript (``only VEP``)
 sift_score                FLOAT         SIFT scores for the predictions (``only VEP``)
@@ -172,15 +172,15 @@ exac_num_het              INTEGER       The number of heterozygote genotypes obs
 exac_num_hom_alt          INTEGER       The number of homozygous alt. genotypes observed in ExAC. Pulled from the ExAC ``AC_Het`` INFO field.
 exac_num_chroms           INTEGER       The number of chromosomes underlying the ExAC variant call. Pulled from the ExAC ``AN_Adj`` INFO field.
 
-aaf_gnomad_all            FLOAT         Allele frequency (population independent) of the variant in gnomad, 
+aaf_gnomad_all            FLOAT         Allele frequency (population independent) of the variant in gnomad,
 aaf_gnomad_afr            FLOAT         Allele frequency (AFR population) of the variant in gnomad
-aaf_gnomad_amr            FLOAT         Allele frequency (AMR population) of the variant in gnomad 
-aaf_gnomad_asj            FLOAT         Allele frequency (ASJ population) of the variant in gnomad 
-aaf_gnomad_eas            FLOAT         Allele frequency (EAS population) of the variant in gnomad 
-aaf_gnomad_fin            FLOAT         Allele frequency (FIN population) of the variant in gnomad 
-aaf_gnomad_nfe            FLOAT         Allele frequency (NFE population) of the variant in gnomad 
-aaf_gnomad_oth            FLOAT         Allele frequency (OTH population) of the variant in gnomad 
-aaf_gnomad_sas            FLOAT         Allele frequency (SAS population) of the variant in gnomad 
+aaf_gnomad_amr            FLOAT         Allele frequency (AMR population) of the variant in gnomad
+aaf_gnomad_asj            FLOAT         Allele frequency (ASJ population) of the variant in gnomad
+aaf_gnomad_eas            FLOAT         Allele frequency (EAS population) of the variant in gnomad
+aaf_gnomad_fin            FLOAT         Allele frequency (FIN population) of the variant in gnomad
+aaf_gnomad_nfe            FLOAT         Allele frequency (NFE population) of the variant in gnomad
+aaf_gnomad_oth            FLOAT         Allele frequency (OTH population) of the variant in gnomad
+aaf_gnomad_sas            FLOAT         Allele frequency (SAS population) of the variant in gnomad
 aaf_gnomad_non_neuro      FLOAT         Allele frequency in non_neuro samples
 aaf_gnomad_controls       FLOAT         Allele frequency in control samples
 aaf_gnomad_non_cancer     FLOAT         Allele frequency in non-cancer samples
@@ -212,12 +212,12 @@ clinvar_origin            STRING        | The type of variant.
                                         | Any of:
                                         | *unknown*, *germline*, *somatic*,
                                         | *inherited*, *paternal*, *maternal*,
-                                        | *de-novo*, *biparental*, *uniparental*, 
-                                        | *not-tested*, *tested-inconclusive*, 
+                                        | *de-novo*, *biparental*, *uniparental*,
+                                        | *not-tested*, *tested-inconclusive*,
                                         | *other*
 clinvar_dsdb              STRING        Variant disease database name
 clinvar_dsdbid            STRING        Variant disease database ID
-clinvar_gene_phenotype    STRING        '|' delimited list of phenotypes associated with this gene (includes any variant in the same 
+clinvar_gene_phenotype    STRING        '|' delimited list of phenotypes associated with this gene (includes any variant in the same
                                         gene in clinvar not just the current variant).
 geno2mp_hpo_ct            INTEGER       Value from geno2mp indicating count of HPO profiles. Set to -1 if missing
 ========================  ========      ==============================================================================================
@@ -253,17 +253,17 @@ cyto_band                 STRING        Chromosomal cytobands that a variant ove
 rmsk                      STRING        | A comma-separated list of RepeatMasker annotations that the variant overlaps.
                                         | Each hit is of the form: ``name_class_family``
 in_cpg_island             BOOL          | Does the variant overlap a CpG island?.
-                                        | Based on UCSC: Regulation > CpG Islands > cpgIslandExt 
+                                        | Based on UCSC: Regulation > CpG Islands > cpgIslandExt
 in_segdup                 BOOL          | Does the variant overlap a segmental duplication?.
                                         | Based on UCSC: Variation&Repeats > Segmental Dups > genomicSuperDups track
 is_conserved              BOOL          | Does the variant overlap a conserved region?
                                         | Based on the 29-way mammalian conservation study
-gerp_bp_score             FLOAT         | GERP conservation score. 
-                                        | Only populated if the ``--load-gerp-bp`` option is used when loading. 
+gerp_bp_score             FLOAT         | GERP conservation score.
+                                        | Only populated if the ``--load-gerp-bp`` option is used when loading.
                                         | Higher scores reflect greater conservation. **At base-pair resolution**.
                                         | Details: http://mendel.stanford.edu/SidowLab/downloads/gerp/
-gerp_element_pval         FLOAT         | GERP elements P-val 
-                                        | Lower P-values scores reflect greater conservation. **Not at base-pair resolution**.  
+gerp_element_pval         FLOAT         | GERP elements P-val
+                                        | Lower P-values scores reflect greater conservation. **Not at base-pair resolution**.
                                         | Details: http://mendel.stanford.edu/SidowLab/downloads/gerp/
 recomb_rate               FLOAT         | Returns the mean recombination rate at the variant site
                                         | Based on HapMapII_GRCh37 genetic map
@@ -282,8 +282,8 @@ fitcons                   FLOAT         | fitCons scores estimating the probabil
 ========================  ========      =========================================================================================================================================
 
 **Note:**
-``CADD`` scores (http://cadd.gs.washington.edu/) are Copyright 2013 University of Washington and Hudson-Alpha Institute for Biotechnology 
-(all rights reserved) but are freely available for all academic, non-commercial applications. For commercial licensing information contact 
+``CADD`` scores (http://cadd.gs.washington.edu/) are Copyright 2013 University of Washington and Hudson-Alpha Institute for Biotechnology
+(all rights reserved) but are freely available for all academic, non-commercial applications. For commercial licensing information contact
 Jennifer McCullar (mccullaj@uw.edu).
 
 
@@ -305,7 +305,7 @@ gms_illumina              FLOAT         | Genome Mappability Scores (GMS) for Il
 gms_solid                 FLOAT         Genome Mappability Scores with SOLiD error models
 gms_iontorrent            FLOAT         Genome Mappability Scores with IonTorrent error models
 in_cse                    BOOL          | Is a variant in an error prone genomic position,
-                                        | using CSE: Context-Specific Sequencing Errors 
+                                        | using CSE: Context-Specific Sequencing Errors
                                         | https://code.google.com/p/discovering-cse/
                                         | http://www.biomedcentral.com/1471-2105/14/S5/S1
 ========================  ========      ==============================================================================================
@@ -335,10 +335,10 @@ encode_consensus_gm12878  STRING        | ENCODE consensus segmentation predicti
                                         | T:    Predicted transcribed region
                                         | WE:   Predicted weak enhancer or open chromatin cis-regulatory element
 						  			    | unknown: This region of the genome had no functional prediction.
-encode_consensus_h1hesc   STRING        ENCODE consensus segmentation prediction for h1HESC.  See encode_consseg_gm12878 for details.       
-encode_consensus_helas3   STRING        ENCODE consensus segmentation prediction for Helas3.  See encode_consseg_gm12878 for details.         
-encode_consensus_hepg2    STRING        ENCODE consensus segmentation prediction for HEPG2.   See encode_consseg_gm12878 for details.          
-encode_consensus_huvec    STRING        ENCODE consensus segmentation prediction for HuVEC.   See encode_consseg_gm12878 for details.        
+encode_consensus_h1hesc   STRING        ENCODE consensus segmentation prediction for h1HESC.  See encode_consseg_gm12878 for details.
+encode_consensus_helas3   STRING        ENCODE consensus segmentation prediction for Helas3.  See encode_consseg_gm12878 for details.
+encode_consensus_hepg2    STRING        ENCODE consensus segmentation prediction for HEPG2.   See encode_consseg_gm12878 for details.
+encode_consensus_huvec    STRING        ENCODE consensus segmentation prediction for HuVEC.   See encode_consseg_gm12878 for details.
 encode_consensus_k562     STRING        ENCODE consensus segmentation prediction for k562.    See encode_consseg_gm12878 for details.
 vista_enhancers           STRING        Experimentally validated human enhancers from VISTA (http://enhancer.lbl.gov/frnt_page_n.shtml)
 ========================  ========      ==============================================================================================
@@ -377,7 +377,7 @@ biotype           STRING        The type of transcript (e.g., protein-coding, ps
 impact            STRING        Impacts due to variation (ref.impact category)
 impact_so         STRING        The sequence ontology term for the impact
 impact_severity   STRING        Severity of the impact based on the impact column value (ref.impact category)
-polyphen_pred     STRING        | Impact of the SNP as given by PolyPhen (``VEP only``) 
+polyphen_pred     STRING        | Impact of the SNP as given by PolyPhen (``VEP only``)
                                 | benign, possibly_damaging, probably_damaging, unknown
 polyphen_scores   FLOAT         Polyphen score reflecting severity (higher the impact, *higher* the score) (``VEP only``)
 sift_pred         STRING        | Impact of the SNP as given by SIFT (``VEP only``)
@@ -502,7 +502,7 @@ Built on version 75 of Ensembl genes
 column_name         type          notes
 ==================  ========      ===============================================================================
 uid                 INTEGER       PRIMARY_KEY (unique identifier for each entry in the table)
-chrom               STRING        The chromosome on which the gene resides     
+chrom               STRING        The chromosome on which the gene resides
 gene                STRING        The gene name
 is_hgnc             BOOL          Flag for gene column: 0 for non HGNC symbol and 1 for HGNC symbol = TRUE
 ensembl_gene_id     STRING        The ensembl gene id for the gene
@@ -534,7 +534,7 @@ Built on version 75 of Ensembl genes
 column_name             type          notes
 ======================  ========      ===============================================================================
 uid                     INTEGER       PRIMARY_KEY (unique identifier for each entry in the table)
-chrom                   STRING        The chromosome on which the gene resides     
+chrom                   STRING        The chromosome on which the gene resides
 gene                    STRING        The gene name
 is_hgnc                 BOOL          Flag for gene column: 0 for non HGNC symbol and 1 for HGNC symbol = TRUE
 ensembl_gene_id         STRING        The ensembl gene id for the gene

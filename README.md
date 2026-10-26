@@ -1,87 +1,66 @@
-GEMINI - integrative exploration of genetic variation and genome annotations.
-=============================================================================
+# gemini-search
 
-![overview](https://github.com/arq5x/gemini/blob/master/docs/images/overview.png)
+A minimal, pure-Python library for querying and searching GEMINI genetic variation databases (SQLite). Compatible with Python 3.14+.
 
-NOTE
-====
+## Overview
 
-Gemini is largely replaced by [slivar](https://github.com/brentp/slivar). We
-recommend to update your pipelines and software to use `slivar` when possible.
-The installation is simpler and the tool is more flexible and includes [extensive
-support for rare disease analysis](https://github.com/brentp/slivar/wiki/rare-disease)
+`gemini-search` extracts the core search and query capabilities from the original GEMINI framework into a lightweight, installable Python library. All legacy CLI commands, loading tools, and web UI components have been removed.
 
-Overview
-========
-The intent of ``GEMINI`` (GEnome MINIing) is to provide a simple, flexible, and 
-powerful framework for exploring genetic variation for personal and medical genetics.
-GEMINI is unique in that it integrates genetic variation (from VCF files) with
-a wealth of genome annotations into a unified database framework. Using this
-integrated database as the analysis framework, we aim to leverage the expressive 
-power of SQL for data analysis, while attempting to overcome the fundamental 
-challenges associated with using databases for very large
-(e.g. 1,000,000 variants times 1,000 samples yields one billion genotypes)
-datasets. In addition, by defining sample relationships with a PED file, GEMINI allows
-one to explore and test for variants that meet specific inheritance models (e.g., 
-recessive, dominant, etc.).
+Features:
+- SQL query execution against GEMINI databases with automatic decompression of genotype BLOBs.
+- Named sample genotype access (`gts.SAMPLE`, `gt_types.SAMPLE`, `gt_depths.SAMPLE`).
+- Genotype filters (`gt_filter = "gt_types.sample1 == HET and gt_types.sample2 == HOM_REF"`).
+- Wildcard filters based on sample pedigree attributes (e.g. `(gt_types).(phenotype == 2).(==HET).(all)`).
+- Genomic region filtering (`region = "chr1:100-200"`).
+- VCF INFO tag dictionary unpacking (`row.info`).
+- Flexible output formatting (`DefaultRowFormat`, `JSONRowFormat`, `VCFRowFormat`, `CarrierSummary`, `TPEDRowFormat`, `SampleDetailRowFormat`).
 
-Documentation
-================
-The official documentation is here: http://gemini.readthedocs.org/en/latest/
+## Installation
 
-The following is a video of a high-level talk from SciPy 2013 describing GEMINI.
+### Using Pixi
+```bash
+pixi install
+```
 
-http://www.youtube.com/watch?v=p-UWmDG6yj4
+### Using Pip
+```bash
+pip install .
+```
 
+## Quick Start
 
-Citation
-================
-If you use GEMINI in your research, please cite the following manuscript:
+```python
+from gemini import GeminiQuery, HET, HOM_REF
 
-Paila U, Chapman BA, Kirchner R, Quinlan AR (2013) 
-GEMINI: Integrative Exploration of Genetic Variation and Genome Annotations. 
-PLoS Comput Biol 9(7): e1003153. doi:10.1371/journal.pcbi.1003153
+gq = GeminiQuery("my_gemini.db")
 
-[Manuscript](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003153)
+# Basic query
+gq.run("SELECT chrom, start, end, ref, alt, gene, info FROM variants WHERE gene = 'SCNN1D'")
+for row in gq:
+    print(row["chrom"], row["start"], row["gene"], row.info.get("AF"))
 
+# Query with genotype columns and filters
+gq.run(
+    "SELECT chrom, start, gts.sample1, gt_types.sample2 FROM variants",
+    gt_filter="gt_types.sample1 == HET and gt_types.sample2 == HOM_REF",
+    region="chr1:1000000-2000000",
+)
+for row in gq:
+    print(row["chrom"], row["start"], row["gts.sample1"])
+```
 
-Mailing List
-================
-Questions and discussion should be directed to the following discussion list:
+## Development
 
-https://groups.google.com/forum/?fromgroups#!forum/gemini-variation
+Run tests:
+```bash
+pixi run test
+```
 
+Run linter:
+```bash
+pixi run lint
+```
 
-Acknowledgements
-================
-GEMINI is being developed in the Quinlan lab (quinlanlab.org) at the University
-of Utah and is led by Brent Pedersen, Uma Paila and Aaron Quinlan.  Substantial contributions 
-to the code base have also been made by Brad Chapman (@chapmanb) and
-Rory Kirchner (@roryk) at the Harvard School of Public Health.
+## License
 
-
-Installation
-============
-Install ``GEMINI`` using the automated installation script, `gemini_install.py`. This
-script installs GEMINI along with required python libraries, third party tools and data 
-files used for variant annotation. The installation documentation contains additional 
-details on installed files and tools.
-
-http://gemini.readthedocs.org/en/latest/content/installation.html
-
-License
-================
-`GEMINI` is freely available under the MIT [license](https://github.com/arq5x/gemini/blob/master/LICENSE).
-
-
-Others
-=========
-`GEMINI` includes `CADD` scores (PMID: 24487276) for annotating variants.
-
-CADD scores (http://cadd.gs.washington.edu/) are Copyright 2013 University of Washington and 
-Hudson-Alpha Institute for Biotechnology (all rights reserved) but are freely available for 
-all academic, non-commercial applications. For commercial licensing information contact 
-Jennifer McCullar (mccullaj@uw.edu).
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/arq5x/gemini/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
+MIT License (see [LICENSE](LICENSE)).

@@ -15,7 +15,7 @@ Requested `--columns` will come first followed by a standard set of columns:
 
 Other tools such as `mendel_errors` additional columns at the end.
 
-When queries are limited to variants in genes, the output will be in 
+When queries are limited to variants in genes, the output will be in
 `gene`, `chrom` order as opposed to the usual `gene`, `position` order.
 
 .. note::
@@ -43,7 +43,7 @@ When queries are limited to variants in genes, the output will be in
    In other words, they will not be in strict positional order for each chromosome.
    This is in an effort to group all candidate variants by gene since the gene
    is typically the atomic unit of interest.
-   
+
    Additionally, all current built-in tools (autosomal_dominant, comp_hets, and autosomal_recessive) only analyze autosomal (non sex chromosome) variants. Analysis of X- and Y-linked phenotypes must be done manually with `--gt-filter`
 
 ==================================
@@ -137,7 +137,7 @@ We are looking for two (typically loss-of-function (LoF))
 heterozygous variants impacting the same gene at different loci.  The
 complicating factor is that this is _recessive_ and as such, we must also
 require that the consequential alleles at each heterozygous site were
-inherited on different chromosomes (one from each parent). 
+inherited on different chromosomes (one from each parent).
 Where possible, `comp_hets` will phase by transmission. Once this has been
 done, the `comp_hets` tool will provide a report of candidate compound
 heterozygotes for each sample/gene.
@@ -152,8 +152,8 @@ Non-exonic/non-coding analyses: `comp_hets` excludes intronic/non-coding variant
   will also be phaseable as long as the parents and their genotypes are known.
 
   As of version 0.16.1, the --ignore-phasing option is removed and there is no
-  --lenient option. 
-  
+  --lenient option.
+
   In 0.16.2, a --pattern-only flag was added to find compound hets by inheritance
   pattern without regard to affection status. A priority code was also added where
   variants with priority 1 are much more informative. See docs below for further
@@ -175,11 +175,11 @@ Genotype Requirements
 
 - Remove candidates where an affected from the same family does NOT share the same het pair.
 - Sites are automatically phased by transmission when parents are present in order to remove false positive candidates.
-  
+
   a. If data from one or both parents are unavailable and the child's data was not phased prior to loading into GEMINI,
      all comp_het variant pairs will automatically be given at most priority == 2. If there's only a single parent and
      both the parent and the affected are HET at both sites, the candidate will have priority 3.
-  
+
   b. `--max-priority x` can be used to set the maximum allowed priority level at which candidate pairs are included in the output.
 
 
@@ -743,7 +743,7 @@ Genotype Requirements
 - both parents must be present, unaffected, and hom_ref
 
 ===========================================================================
-``gene_wise``: Custom genotype filtering by gene. 
+``gene_wise``: Custom genotype filtering by gene.
 ===========================================================================
 The gemini query tool allows querying by variant and the inheritance tools
 described above enable querying by gene for fixed inheritance patterns.
@@ -772,7 +772,7 @@ gene in order for variants in that gene to be reported. We can envision a scenar
 we have 6 families (and 6 filters) and we want to report genes where 4 of them meet the
 filters. In that case, the query would have 6 `--gt-filter` s and `--min-filters` of 3.
 
-This differs from using gemini query with a single `--gt-filter` that combines each of those 
+This differs from using gemini query with a single `--gt-filter` that combines each of those
 terms with an *and* because this allows each filter to be met **in a different variant** but
 **in the same gene** while the gemini query tool applies all elements of the single filter
 to each variant.
@@ -810,7 +810,7 @@ E.g.
         --gt-filter "gt_types.fam2_kid == HET" \
         --gt-filter "gt_types.fam3_kid == HET" \
         --min-filters 2 \
-        test.db 
+        test.db
 
 
 will required that all samples meet the minimum depth filter and then keep
@@ -820,7 +820,7 @@ the subset of those that meet 2 out of the 3 `--gt-filters`.
 ``--where``
 ---------------
 
-By default `gene_wise` limits to variants passing the clause: 
+By default `gene_wise` limits to variants passing the clause:
 
 `is_exonic = 1 AND impact_severity != 'LOW'`
 
@@ -968,15 +968,15 @@ affect protein_coding transcripts from processed RNA, etc.
 ===========================================================
 Occassionally one may need to update the sample information
 stored in the ``samples`` table. The ``amend`` tool allows one
-to provide an updated PED file as input and it will update 
+to provide an updated PED file as input and it will update
 each sample_id in the PED file that matches a sample_id.
 
 For example, assume you have already loaded a GEMINI database
-with a ``samples.ped`` where mom and dad are unaffected and 
+with a ``samples.ped`` where mom and dad are unaffected and
 kid isaffected:
 
 .. code-block:: bash
-    
+
     $ cat samples.ped
     1 dad 0 0 1  1
     1 mom 0 0 1  1

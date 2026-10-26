@@ -107,7 +107,7 @@ Release History
 
 0.17.2
 ======
-#. Fix bcolz dependencies owing to issues with bcolz 0.11.0 
+#. Fix bcolz dependencies owing to issues with bcolz 0.11.0
 
 0.17.1
 ======

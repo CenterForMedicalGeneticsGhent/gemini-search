@@ -7,7 +7,7 @@ Ideas
 =====
 4. Popgen:
 	a. coefficient of inbreeding
-	b. 
+	b.
 5. Visualization
 	a. make plots of a given region/genes with snps on top, as well as the allele frequencies, etc.
 	b. use genometools libraries.
@@ -19,7 +19,7 @@ Ideas
 	pop get
 	    # use a raw SQL query
 		pop get -q "SELECT..."
-		
+
 		# use short cuts that automatically generate the appropriate queries behind the scenes.
 		pop get -s variants
 		pop get -s tstv
@@ -28,4 +28,3 @@ Ideas
 		pop get -s lof
 	pop stats
 		fst  - model after vcftools?
-	

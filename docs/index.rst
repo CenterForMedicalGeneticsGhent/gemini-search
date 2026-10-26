@@ -52,7 +52,7 @@ Latest news
 ============================
 
 ----------------
-New Installation 
+New Installation
 ----------------
 
 In version *0.18*, we have introduced a new installation procedure based on `conda <http://conda.pydata.org/docs/>`_ that

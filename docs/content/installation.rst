@@ -35,8 +35,8 @@ in any directories one wishes.**
 
   The automated installtion script typically requires ~30 minutes, primarily
   owing to the time required to download the GEMINI genome annotation files.
-  Also, please note that the annotation files **requires ~15Gb of storage**, 
-  so please ensure that the data directory (``/usr/local/share/gemini`` in 
+  Also, please note that the annotation files **requires ~15Gb of storage**,
+  so please ensure that the data directory (``/usr/local/share/gemini`` in
   the example above) has sufficient space.
 
 .. tip::
@@ -70,7 +70,7 @@ in any directories one wishes.**
 Dependencies
 -------------------------------
 The installer requires:
-  
+
   - Python 2.7.x
   - git
   - wget
@@ -90,7 +90,7 @@ above dependencies:
 
 Installing without root access.
 -------------------------------
-As many users do not have root or sudo access, the automated installer also 
+As many users do not have root or sudo access, the automated installer also
 has options to install in "non-root" environments:
 
 .. code-block:: bash
@@ -100,7 +100,7 @@ has options to install in "non-root" environments:
 
 Updating your PATH to find the GEMINI executable
 -------------------------------------------------
-At this point, you will have a self-contained installation of GEMINI, 
+At this point, you will have a self-contained installation of GEMINI,
 including both the software and its associated genome annotations. However,
 if you have done a custom install in a "non-root" enviornment, you will
 first need to update your ``PATH`` environment variable to include the path
@@ -114,7 +114,7 @@ to your ``.bashrc`` or ``.bash_profile``:
 
     $ export PATH=$PATH:~/gemini/bin
 
-Note that this change will only last for the life of your current terminal 
+Note that this change will only last for the life of your current terminal
 session.  To make this more permanent, update your ``.bash_profile`` so that
 this change is made each time you login.
 
@@ -134,16 +134,16 @@ gemini only installs the software itself, not the source
 repository with the tests. To run the tests, do:
 
 .. code-block:: bash
-   
+
    $ git clone https://github.com/arq5x/gemini
    $ git checkout v0.18.3 # or the current version that you installed
    $ cd gemini
-   $ bash master-test.sh 
+   $ bash master-test.sh
 
 Updating the GEMINI executables and annotations
 -------------------------------------------------
 Once installed with the automated installer, it is easy to upgrade the
-GEMINI programs and associated data files to the latest released 
+GEMINI programs and associated data files to the latest released
 version with:
 
 .. code-block:: bash
@@ -230,7 +230,7 @@ you'd like to install the necessary data files. The recommended path is
 	default installation owing to their large file size. They may however be installed as
 	additional data files using the ``gemini update --dataonly`` option, with the flag
 	``--extra`` for ``gerp_bp`` and ``cadd_score``.
-    
+
 Using previously installed annotation files
 ===============================================================
 If you have installed GEMINI with the annotation files on a server and you can NFS mount
@@ -250,5 +250,3 @@ correctly on your system.  We **strongly** encourage you to run these tests.
 .. code-block:: bash
 
     $ bash master-test.sh
-
-
