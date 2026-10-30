@@ -53,6 +53,8 @@ def get_subjects(db_or_conn, sample_filter=None):
         conn = db_or_conn.conn
     else:
         conn = db_or_conn
+        if conn.row_factory is None:
+            conn.row_factory = sqlite3.Row
 
     try:
         cursor = conn.cursor()

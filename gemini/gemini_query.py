@@ -152,10 +152,13 @@ class TPEDRowFormat(RowFormat):
             gq = gq_or_args
         else:
             gq = GeminiQuery(gq_or_args.db if hasattr(gq_or_args, "db") else gq_or_args)
+        self.gq = gq
         self.samples = [gq.idx_to_sample_object[x] for x in range(len(gq.sample_to_idx))]
 
     def format_query(self, query):
-        needed = ["chrom", "rs_ids", "start", "ref", "alt", "gts", "type", "variant_id"]
+        needed = ["chrom", "start", "ref", "alt", "gts", "type", "variant_id"]
+        if hasattr(self.gq, "variant_column_names") and "rs_ids" in self.gq.variant_column_names:
+            needed.insert(1, "rs_ids")
         return ensure_columns(query, needed)
 
     def predicate(self, row, _splitter=re.compile(r"[|/]")):
@@ -173,7 +176,7 @@ class TPEDRowFormat(RowFormat):
             for i, g in enumerate(geno)
         ]
         genotypes = " ".join(flatten(geno))
-        name = str(row["variant_id"])
+        name = str(row.get("rs_ids") or row["variant_id"])
         return f"{chrom} {name} 0 {start} {genotypes}"
 
     def _fix_genotype(self, chrom, start, genotype, sex):
@@ -224,6 +227,8 @@ class VCFRowFormat(RowFormat):
             "gt_types",
             "gt_phases",
         ]
+        if hasattr(self.gq, "variant_column_names") and self.gq.variant_column_names:
+            needed = [c for c in needed if c in self.gq.variant_column_names]
         return ensure_columns(query, needed)
 
     def format(self, row):
@@ -232,7 +237,8 @@ class VCFRowFormat(RowFormat):
         vcf_rec.append("." if row.row["vcf_id"] is None else row.row["vcf_id"])
         vcf_rec.extend([row.row["ref"], row.row["alt"], row.row["qual"]])
         vcf_rec.append("PASS" if row.row["filter"] is None else row.row["filter"])
-        vcf_rec.extend([istr(row["info"]), "GT"])
+        info_val = istr(row["info"]) if "info" in row and row["info"] is not None else "."
+        vcf_rec.extend([info_val, "GT"])
 
         gts = [util.to_str(r) for r in row["gts"]]
         gt_types = list(row["gt_types"])
@@ -384,6 +390,12 @@ class GeminiRow:
     def __contains__(self, key):
         return key in self.keys()
 
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def keys(self):
         row_keys = list(self.row.keys()) if hasattr(self.row, "keys") else []
         return row_keys + list(self.cache.keys())
@@ -416,6 +428,7 @@ class GeminiQuery:
         cursor = self.conn.cursor()
         self.gt_cols = util.get_gt_cols(cursor)
         self._collect_sample_table_columns(cursor)
+        self._collect_variant_table_columns(cursor)
 
         self.sample_info = collections.defaultdict(list)
         self.sample_to_idx = {}
@@ -486,6 +499,13 @@ class GeminiQuery:
             self.sample_column_names = [r["name"] for r in cursor.fetchall()]
         except sqlite3.OperationalError:
             self.sample_column_names = []
+
+    def _collect_variant_table_columns(self, cursor):
+        try:
+            cursor.execute("PRAGMA table_info('variants')")
+            self.variant_column_names = [r["name"] for r in cursor.fetchall()]
+        except sqlite3.OperationalError:
+            self.variant_column_names = []
 
     def run(
         self,
@@ -826,23 +846,22 @@ class GeminiQuery:
 
     def _add_vcf_cols_to_query(self):
         select_tokens, rest_of_query = get_select_cols_and_rest(self.query)
-        cols_to_add = [
-            col
-            for col in [
-                "chrom",
-                "start",
-                "vcf_id",
-                "ref",
-                "alt",
-                "qual",
-                "filter",
-                "info",
-                "gts",
-                "gt_types",
-                "gt_phases",
-            ]
-            if not any(col in s for s in select_tokens)
+        vcf_cols = [
+            "chrom",
+            "start",
+            "vcf_id",
+            "ref",
+            "alt",
+            "qual",
+            "filter",
+            "info",
+            "gts",
+            "gt_types",
+            "gt_phases",
         ]
+        if self.variant_column_names:
+            vcf_cols = [c for c in vcf_cols if c in self.variant_column_names]
+        cols_to_add = [col for col in vcf_cols if not any(col in s for s in select_tokens)]
         select_clause = ", ".join(select_tokens + cols_to_add)
         return f"SELECT {select_clause} {rest_of_query}"
 

@@ -252,3 +252,26 @@ def test_unsafe_filter_raises(test_db):
     gq = GeminiQuery(test_db)
     with pytest.raises(ValueError, match="invalid --gt-filter"):
         gq.run("SELECT chrom FROM variants", gt_filter="__import__('os').system('ls')")
+
+
+def test_tped_formatter(test_db):
+    gq = GeminiQuery(test_db, out_format="tped")
+    gq.run("SELECT chrom, start, end, ref, alt FROM variants LIMIT 1")
+    row = next(gq)
+    parts = str(row).split(" ")
+    assert len(parts) >= 8
+    assert parts[0] == "1"
+
+
+def test_gemini_row_get(test_db):
+    gq = GeminiQuery(test_db)
+    gq.run("SELECT chrom, start FROM variants LIMIT 1")
+    row = next(gq)
+    assert row.get("chrom") == "chr1"
+    assert row.get("nonexistent", "default_val") == "default_val"
+
+
+def test_gemini_query_import():
+    from gemini import GeminiQuery as GQ
+
+    assert GQ is not None
