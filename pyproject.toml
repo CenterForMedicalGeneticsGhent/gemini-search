@@ -43,3 +43,6 @@ numpy = ">=2.5"
 pytest = ">=8.0"
 ruff = ">=0.17.2,<0.18"
 python-snappy = ">=0.7.3,<0.8"
+
+[tool.pixi.pypi-dependencies]
+gemini-search = { path = ".", editable = true }
