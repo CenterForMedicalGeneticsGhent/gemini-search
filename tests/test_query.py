@@ -275,3 +275,37 @@ def test_gemini_query_import():
     from gemini import GeminiQuery as GQ
 
     assert GQ is not None
+
+
+def test_gemini_row_iteration(test_db):
+    from collections.abc import Mapping
+
+    gq = GeminiQuery(test_db)
+    gq.run("SELECT chrom, start, gene FROM variants LIMIT 1")
+    row = next(gq)
+
+    assert isinstance(row, Mapping)
+    keys = list(row)
+    assert keys == ["chrom", "start", "gene"]
+    assert len(row) == 3
+
+    d = dict(row)
+    assert d == {"chrom": "chr1", "start": 100, "gene": "GENE1"}
+
+    comp = {k: row[k] for k in row}
+    assert comp == d
+
+
+def test_gemini_row_indexing(test_db):
+    gq = GeminiQuery(test_db)
+    gq.run("SELECT chrom, start FROM variants LIMIT 1")
+    row = next(gq)
+
+    assert row[0] == "chr1"
+    assert row[1] == 100
+
+    with pytest.raises(IndexError):
+        _ = row[999]
+
+    with pytest.raises(KeyError):
+        _ = row["nonexistent_column"]

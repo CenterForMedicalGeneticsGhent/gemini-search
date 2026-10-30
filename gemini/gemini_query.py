@@ -4,6 +4,7 @@ import itertools
 import json
 import re
 import sqlite3
+from collections.abc import Mapping
 from typing import Final
 
 import numpy as np
@@ -336,6 +337,12 @@ class GeminiRow:
         return self["info"]
 
     def __getitem__(self, key):
+        if isinstance(key, (int, slice)):
+            try:
+                return self.row[key]
+            except IndexError:
+                raise IndexError(key) from None
+
         key = str(key)
         if key in (
             "het_samples",
@@ -387,6 +394,12 @@ class GeminiRow:
         except IndexError, KeyError:
             raise KeyError(key) from None
 
+    def __iter__(self):
+        return iter(self.keys())
+
+    def __len__(self):
+        return len(self.keys())
+
     def __contains__(self, key):
         return key in self.keys()
 
@@ -410,6 +423,9 @@ class GeminiRow:
         return self.formatter.format(self)
 
     __str__ = __repr__
+
+
+Mapping.register(GeminiRow)
 
 
 class GeminiQuery:
